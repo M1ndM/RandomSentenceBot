@@ -54,7 +54,6 @@ def parsing(target):
     main_loop.run_until_complete(main())
 
     if target == "sentence":
-
         sentence = adjectivesList[random.randint(0, 100)].title() + \
                    ' ' + nounsList[random.randint(0, 100)] + \
                    ' ' + verbsList[random.randint(0, 100)] + \
@@ -70,22 +69,31 @@ def parsing(target):
             sentence = predictionsStart[i] + nounsList[random.randint(0, 100)]
 
         return sentence
+    elif target == "compliment":
+        sentence = "Ты сегодня такой " + adjectivesList[random.randint(0, 100)]
+
+        return sentence
 
 
 @bot.message_handler(commands=['start'])
 def command_start(message):
     keyboard = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     prediction = types.KeyboardButton(text="Предсказание")
-    sentence = types.KeyboardButton(text="Предложение")
-    keyboard.add(prediction, sentence)
-    bot.reply_to(message, "Выбрай", reply_markup=keyboard)
+    sentence = types.KeyboardButton(text="Сделай предложение")
+    comliment = types.KeyboardButton(text="Хочу комплимент")
+    keyboard.add(prediction, sentence, comliment)
+    bot.reply_to(message, "Выбирай", reply_markup=keyboard)
 
 
 @bot.message_handler(content_types=['text'])
 def whatWouldYouDo(message):
     if message.text == "Сделай предложение":
         bot.send_message(message.from_user.id, parsing("sentence"))
-    if message.text == "Предсказание":
+
+    elif message.text == "Предсказание":
         bot.send_message(message.from_user.id, parsing("prediction"))
+
+    elif message.text == "Хочу комплимент":
+        bot.send_message(message.from_user.id, parsing("compliment"))
 
 bot.polling()
